@@ -1,0 +1,136 @@
+{
+  "name": "ngx-feature-proxy",
+  "version": "1.0.0",
+  "description": "Feature flag library with Unleash integration, provides reactive programing, type-safe feature flag management with zero-configuration setup.",
+  "author": {
+    "name": "Kiet Le",
+    "email": "kietgolx65234@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zenkiet/ngx-feature-proxy"
+  },
+  "bugs": {
+    "url": "https://github.com/zenkiet/ngx-feature-proxy/issues"
+  },
+  "homepage": "https://github.com/zenkiet/ngx-feature-proxy#readme",
+  "main": "dist/ngx-feature-proxy/bundles/ngx-feature-proxy.umd.js",
+  "module": "dist/ngx-feature-proxy/fesm2022/ngx-feature-proxy.mjs",
+  "typings": "dist/ngx-feature-proxy/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/ngx-feature-proxy/index.d.ts",
+      "esm": "./dist/ngx-feature-proxy/esm2022/ngx-feature-proxy.mjs",
+      "default": "./dist/ngx-feature-proxy/bundles/ngx-feature-proxy.umd.js"
+    }
+  },
+  "files": [
+    "dist/ngx-feature-proxy/**/*",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md"
+  ],
+  "keywords": [
+    "angular",
+    "tool",
+    "unleash",
+    "rxjs",
+    "feature-flags",
+    "zenkiet"
+  ],
+  "scripts": {
+    "build": "ng build ngx-feature-proxy",
+    "lint": "ng lint",
+    "prepare": "husky",
+    "format": "prettier --write \"projects/**/*.{ts,html,scss,json}\"",
+    "semantic-release": "semantic-release",
+    "prerelease": "npm run build",
+    "prepublishOnly": "npm run build"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{html,scss,json,md}": [
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": ".husky/pre-commit",
+      "commit-msg": ".husky/commit-msg",
+      "pre-push": ".husky/pre-push",
+      "post-merge": ".husky/post-merge"
+    }
+  },
+  "prettier": {
+    "useTabs": false,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "printWidth": 100,
+    "semi": true,
+    "singleQuote": true,
+    "bracketSpacing": true,
+    "arrowParens": "always",
+    "bracketSameLine": false,
+    "singleAttributePerLine": true,
+    "plugins": [
+      "prettier-plugin-organize-imports"
+    ]
+  },
+  "dependencies": {
+    "@angular/common": "^20.3.0",
+    "@angular/compiler": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@angular/forms": "^20.3.0",
+    "@angular/platform-browser": "^20.3.0",
+    "@angular/router": "^20.3.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "unleash-proxy-client": "^3.7.8"
+  },
+  "devDependencies": {
+    "@angular-eslint/builder": "20.4.0",
+    "@angular/build": "^20.3.5",
+    "@angular/cli": "^20.3.5",
+    "@angular/compiler-cli": "^20.3.0",
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@commitlint/prompt-cli": "^20.1.0",
+    "@eslint/js": "^9.37.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/exec": "^7.1.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.6",
+    "@semantic-release/npm": "^12.0.2",
+    "@semantic-release/release-notes-generator": "^14.1.0",
+    "angular-eslint": "20.4.0",
+    "eslint": "^9.37.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.4",
+    "ng-packagr": "^20.3.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-organize-imports": "^4.3.0",
+    "semantic-release": "^24.2.9",
+    "typescript": "~5.9.2",
+    "typescript-eslint": "8.46.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "volta": {
+    "node": "22"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

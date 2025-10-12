@@ -1,0 +1,48 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "yarn",
+    "analytics": "8c75c29e-22e4-4b3e-b46d-9b0f15124b30",
+    "schematicCollections": ["angular-eslint"]
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "ngx-feature-proxy": {
+      "projectType": "library",
+      "root": "projects/ngx-feature-proxy",
+      "sourceRoot": "projects/ngx-feature-proxy/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngx-feature-proxy/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngx-feature-proxy/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/ngx-feature-proxy/tsconfig.spec.json"
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/ngx-feature-proxy/**/*.ts",
+              "projects/ngx-feature-proxy/**/*.html"
+            ],
+            "eslintConfig": "projects/ngx-feature-proxy/eslint.config.js"
+          }
+        }
+      }
+    }
+  }
+}
