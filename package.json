@@ -46,8 +46,8 @@
     "prepare": "husky",
     "format": "prettier --write \"projects/**/*.{ts,html,scss,json}\"",
     "semantic-release": "semantic-release",
-    "prerelease": "npm run build",
-    "prepublishOnly": "npm run build"
+    "prerelease": "yarn build",
+    "prepublishOnly": "yarn build"
   },
   "config": {
     "commitizen": {

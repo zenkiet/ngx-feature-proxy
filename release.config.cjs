@@ -11,7 +11,7 @@ module.exports = {
       '@semantic-release/exec',
       {
         verifyConditionsCmd: 'yarn build',
-        prepareCmd: 'echo "Build completed!"',
+        prepareCmd: 'cp README.md LICENSE CHANGELOG.md dist/ngx-feature-proxy/',
       },
     ],
     ['@semantic-release/npm', { pkgRoot, npmPublish: true, tarballDir: 'release' }],
