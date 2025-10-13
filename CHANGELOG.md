@@ -1,3 +1,9 @@
+# [1.2.0](https://github.com/zenkiet/ngx-feature-proxy/compare/v1.1.0...v1.2.0) (2025-10-13)
+
+### Features
+
+- ✨ support complexity directive and implement documents ([db9a96d](https://github.com/zenkiet/ngx-feature-proxy/commit/db9a96d465ba66ce74b7ecf6dec40bcf99cf1544))
+
 # [1.1.0](https://github.com/zenkiet/ngx-feature-proxy/compare/v1.0.0...v1.1.0) (2025-10-13)
 
 ### Features
