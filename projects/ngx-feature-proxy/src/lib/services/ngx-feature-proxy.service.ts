@@ -23,75 +23,19 @@ export class NgxFeatureProxyService implements OnDestroy {
   });
 
   private _cache = new Map<string, boolean>();
-  private initPromise: Promise<void> | null = null;
 
   /** Services */
   private _config = inject(UNLEASH_TOKEN);
   private _client = new UnleashClient(this._config);
 
   constructor() {
-    // Listen to client events
-    const events = [
-      [EVENTS.INIT, () => this.$state.set({ ...this.$state(), initialized: true })],
-      [
-        EVENTS.READY,
-        () =>
-          this.$state.set({
-            ...this.$state(),
-            ready: true,
-            lastUpdate: Date.now(),
-          }),
-      ],
-      [
-        EVENTS.UPDATE,
-        () =>
-          this.$state.set({
-            ...this.$state(),
-            lastUpdate: Date.now(),
-          }),
-      ],
-      [
-        EVENTS.ERROR,
-        (error: unknown) =>
-          this.$state.set({
-            ...this.$state(),
-            error,
-          }),
-      ],
-      [EVENTS.IMPRESSION, (event: ImpressionEvent) => this.$impression.set(event)],
-    ] as const;
-    events.forEach(([event, handler]) => {
-      this._client.on(event, handler);
-    });
-
-    // Auto-initialize
-    void this.initialize();
+    this._listenToEvents();
+    this._initialize();
   }
 
   ngOnDestroy(): void {
     this._client.stop();
     this._cache.clear();
-  }
-
-  /**
-   * Initialize the client
-   */
-  initialize() {
-    if (!this.initPromise) {
-      this.initPromise = new Promise((resolve, reject) => {
-        defer(() => this._client.start()).subscribe({
-          next: () => {
-            this.$state.set({ ...this.$state(), initialized: true, ready: true });
-            resolve();
-          },
-          error: (error) => {
-            this.$state.set({ ...this.$state(), error });
-            reject(error);
-          },
-        });
-      });
-    }
-    return this.initPromise;
   }
 
   /**
@@ -145,5 +89,35 @@ export class NgxFeatureProxyService implements OnDestroy {
    * */
   refresh() {
     return defer(() => this._client.updateToggles());
+  }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Private Methods
+  // -----------------------------------------------------------------------------------------------------
+
+  /**
+   * Initialize the client
+   */
+  private _initialize() {
+    this._client
+      .start()
+      .then(() => this.$state.set({ ...this.$state(), initialized: true, ready: true }))
+      .catch((error) => this.$state.set({ ...this.$state(), error }));
+  }
+
+  /**
+   * Listen to client events
+   */
+  private _listenToEvents() {
+    // Listen to client events
+    this._client.on(EVENTS.INIT, () => this.$state.set({ ...this.$state(), initialized: true }));
+    this._client.on(EVENTS.READY, () =>
+      this.$state.set({ ...this.$state(), ready: true, lastUpdate: Date.now() })
+    );
+    this._client.on(EVENTS.UPDATE, () =>
+      this.$state.set({ ...this.$state(), lastUpdate: Date.now() })
+    );
+    this._client.on(EVENTS.ERROR, (error: unknown) => this.$state.set({ ...this.$state(), error }));
+    this._client.on(EVENTS.IMPRESSION, (event: ImpressionEvent) => this.$impression.set(event));
   }
 }
