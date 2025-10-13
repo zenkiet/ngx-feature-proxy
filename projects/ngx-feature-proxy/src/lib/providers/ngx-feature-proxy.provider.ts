@@ -1,7 +1,6 @@
 import {
   EnvironmentProviders,
   inject,
-  isDevMode,
   makeEnvironmentProviders,
   provideAppInitializer,
 } from '@angular/core';
@@ -9,9 +8,7 @@ import { IConfig } from 'unleash-proxy-client';
 import { NgxFeatureProxyService } from '../services';
 import { UNLEASH_TOKEN } from '../tokens';
 
-export interface NgxFeatureProxyConfig extends IConfig {
-  devMode?: boolean;
-}
+export type NgxFeatureProxyConfig = IConfig;
 
 export function provideFeatureProxy(config: NgxFeatureProxyConfig): EnvironmentProviders {
   return makeEnvironmentProviders([
@@ -23,13 +20,9 @@ export function provideFeatureProxy(config: NgxFeatureProxyConfig): EnvironmentP
         disableMetrics: false,
         bootstrap: [],
         bootstrapOverride: true,
-        devMode: isDevMode(),
         ...config,
       },
     },
-    provideAppInitializer(() => {
-      const service = inject(NgxFeatureProxyService);
-      return service.initialize();
-    }),
+    provideAppInitializer(() => void inject(NgxFeatureProxyService)),
   ]);
 }

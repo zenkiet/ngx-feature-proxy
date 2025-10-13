@@ -23,5 +23,9 @@
   "labels": ["dependencies", "renovate"],
   "dependencyDashboard": true,
   "dependencyDashboardAutoclose": true,
-  "timezone": "Asia/Ho_Chi_Minh"
+  "timezone": "Asia/Ho_Chi_Minh",
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"]
+  }
 }

@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy, inject, signal } from '@angular/core';
 import { defer } from 'rxjs';
-import { EVENTS, IContext, UnleashClient } from 'unleash-proxy-client';
+import { EVENTS, IContext, IVariant, UnleashClient } from 'unleash-proxy-client';
 import { UNLEASH_TOKEN } from '../tokens';
 import { ImpressionEvent } from '../types';
 
@@ -28,6 +28,10 @@ export class NgxFeatureProxyService implements OnDestroy {
   private _config = inject(UNLEASH_TOKEN);
   private _client = new UnleashClient(this._config);
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ LifeCycle Hooks
+  // -----------------------------------------------------------------------------------------------------
+
   constructor() {
     this._listenToEvents();
     this._initialize();
@@ -38,15 +42,20 @@ export class NgxFeatureProxyService implements OnDestroy {
     this._cache.clear();
   }
 
-  /**
-   * Check if feature is enabled (sync)
-   */
+  // -----------------------------------------------------------------------------------------------------
+  // @ Public Methods
+  // -----------------------------------------------------------------------------------------------------
+
   isEnabled = (feature: string): boolean => this._client.isEnabled(feature);
 
-  /**
-   * Check if feature is disabled (sync)
-   */
   isDisabled = (feature: string): boolean => !this.isEnabled(feature);
+
+  getVariant = (feature: string): IVariant => this._client.getVariant(feature);
+
+  updateContext = (context: Record<string, string | number | boolean>) =>
+    defer(() => this._client.updateContext(context));
+
+  refresh = () => defer(() => this._client.updateToggles());
 
   /**
    * Get reactive signal
@@ -62,33 +71,27 @@ export class NgxFeatureProxyService implements OnDestroy {
   /**
    * Get multiple features
    */
-  features(names: string[], operator: 'and' | 'or' = 'or'): boolean {
-    if (names.length === 0) return false;
-    if (names.length === 1) return this.feature(names[0]);
+  features(expression: string): boolean {
+    if (typeof expression !== 'string' || !expression.trim()) {
+      console.error('Expression is not a valid non-empty string:', expression);
+      return false;
+    }
 
-    const states = names.map((name) => this.feature(name));
-    return operator === 'and' ? states.every(Boolean) : states.some(Boolean);
-  }
+    if (/[^\\w\\s()&|!]/.test(expression.trim())) {
+      console.error('Expression contains invalid characters:', expression);
+      return false;
+    }
 
-  /**
-   * Get feature variant
-   */
-  getVariant(feature: string) {
-    return this._client.getVariant(feature);
-  }
+    const prepared = expression.trim().replace(/\b([A-Za-z0-9_]+)\b/g, (_, name) => {
+      return `this.feature('${name}')`;
+    });
 
-  /**
-   * Update context
-   */
-  updateContext(context: Record<string, string | number | boolean>) {
-    return defer(() => this._client.updateContext(context));
-  }
-
-  /**
-   * Force refresh toggles
-   * */
-  refresh() {
-    return defer(() => this._client.updateToggles());
+    try {
+      return new Function(`return (${prepared});`).call(this);
+    } catch {
+      console.error('Error evaluating expression:', expression);
+      return false;
+    }
   }
 
   // -----------------------------------------------------------------------------------------------------
