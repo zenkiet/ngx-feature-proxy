@@ -1,6 +1,6 @@
 {
   "name": "ngx-feature-proxy",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Feature flag library with Unleash integration, provides reactive programing, type-safe feature flag management with zero-configuration setup.",
   "author": {
     "name": "Kiet Le",
@@ -87,21 +87,19 @@
     ]
   },
   "dependencies": {
-    "@angular/common": "^20.3.0",
-    "@angular/compiler": "^20.3.0",
-    "@angular/core": "^20.3.0",
-    "@angular/forms": "^20.3.0",
-    "@angular/platform-browser": "^20.3.0",
-    "@angular/router": "^20.3.0",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
+    "@angular/common": "^20.3.4",
+    "@angular/compiler": "^20.3.4",
+    "@angular/core": "^20.3.4",
+    "@angular/router": "^20.3.4",
+    "rxjs": "~7.8.2",
+    "tslib": "^2.8.1",
     "unleash-proxy-client": "^3.7.8"
   },
   "devDependencies": {
     "@angular-eslint/builder": "20.4.0",
     "@angular/build": "^20.3.5",
     "@angular/cli": "^20.3.5",
-    "@angular/compiler-cli": "^20.3.0",
+    "@angular/compiler-cli": "^20.3.4",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@commitlint/prompt-cli": "^20.1.0",
@@ -121,7 +119,7 @@
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.3.0",
     "semantic-release": "^24.2.9",
-    "typescript": "~5.9.2",
+    "typescript": "~5.9.3",
     "typescript-eslint": "8.46.0"
   },
   "engines": {

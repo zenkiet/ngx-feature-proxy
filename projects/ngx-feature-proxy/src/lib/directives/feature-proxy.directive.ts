@@ -1,52 +1,21 @@
-import { NgIf, NgIfContext } from '@angular/common';
-import { Directive, TemplateRef, computed, effect, inject, input } from '@angular/core';
+import { NgIf } from '@angular/common';
+import { Directive, computed, effect, inject, input } from '@angular/core';
 import { NgxFeatureProxyService } from '../services';
 
-/**
- * Structural directive that shows or hides content based on the state of one or
- * more feature flags. The directive accepts either:
- *
- *  - A single feature name (string)
- *  - An array of feature names (treated as an OR condition)
- *  - A boolean expression string using `&&`, `||`, `!` and parentheses.
- *
- * If no operator is specified, arrays default to OR behaviour (any flag true)
- * and expression strings are evaluated directly. You can optionally provide
- * an `else` template using the `featureEnabledElse` input.
- *
- * @example
- * ```html
- * <!-- Single feature -->
- * <div *featureEnabled="'betaFeature'">Beta feature is ON</div>
- *
- * <!-- Multiple features (OR) -->
- * <div *featureEnabled="['flagA', 'flagB']">A or B is enabled</div>
- *
- * <!-- Expression with AND/OR -->
- * <div *featureEnabled="'flagA && flagB || !flagC'">
- *   This shows when both A and B are on, or C is off
- * </div>
- *
- * <!-- With else template -->
- * <div *featureEnabled="'premium' ; else: premiumElse">Welcome premium user</div>
- * <ng-template #premiumElse>Upgrade to premium!</ng-template>
- * ```
- */
 @Directive({
-  selector: '[featureEnabled]',
+  selector: '[featureProxy]',
   standalone: true,
   hostDirectives: [NgIf],
 })
-export class FeatureEnabledSimpleDirective {
+export class FeatureProxyDirective {
+  /** Inputs */
   $featureEnabled = input.required<string | string[]>({ alias: 'featureEnabled' });
-  $elseTemplate = input<TemplateRef<NgIfContext<boolean>> | null>(null, {
-    alias: 'featureEnabledElse',
-  });
 
   /** Services */
   private _service = inject(NgxFeatureProxyService);
   private _ngIf = inject(NgIf);
 
+  /** Computed */
   $currentState = computed(() => {
     const value = this.$featureEnabled();
 
@@ -76,11 +45,14 @@ export class FeatureEnabledSimpleDirective {
     }
   });
 
+  // --------------------------------------------------------------------------
+  // Lifecycle Hooks
+  // --------------------------------------------------------------------------
+
   constructor() {
     effect(
       () => {
         this._ngIf.ngIf = this.$currentState();
-        this._ngIf.ngIfElse = this.$elseTemplate();
       },
       { allowSignalWrites: true }
     );
