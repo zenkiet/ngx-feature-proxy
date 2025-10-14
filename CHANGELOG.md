@@ -1,3 +1,9 @@
+# [1.3.0](https://github.com/zenkiet/ngx-feature-proxy/compare/v1.2.0...v1.3.0) (2025-10-14)
+
+### Features
+
+- ✨ improve guard & adapt provider for lower angular version ([a2ab85d](https://github.com/zenkiet/ngx-feature-proxy/commit/a2ab85d59da675aa255194fe5768247749f78df6))
+
 # [1.2.0](https://github.com/zenkiet/ngx-feature-proxy/compare/v1.1.0...v1.2.0) (2025-10-13)
 
 ### Features
