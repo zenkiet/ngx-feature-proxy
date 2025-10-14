@@ -363,10 +363,10 @@ export const routes: Routes = [
     loadComponent: () => import('./dashboard/dashboard.component'),
     canActivate: [
       // 🎯 Simple feature guard
-      featureProxyGuard(
-        (service) => service.isEnabled('newDashboard'),
-        '/legacy-dashboard' // 🔄 Redirect if disabled
-      ),
+      featureProxyGuard({
+        expression: 'newDashboard',
+        redirectTo: '/legacy-dashboard',
+      }),
     ],
   },
   {
@@ -374,29 +374,32 @@ export const routes: Routes = [
     loadChildren: () => import('./admin/admin.routes'),
     canActivate: [
       // 🛡️ Complex permission guard
-      featureProxyGuard(
-        (service) => service.features('adminAccess && !maintenanceMode'),
-        '/unauthorized'
-      ),
-    ],
-  },
-  {
-    path: 'beta-features',
-    loadComponent: () => import('./beta/beta.component'),
-    canActivate: [
-      // 🧪 Beta access guard
-      featureProxyGuard((service) => {
-        const variant = service.getVariant('betaProgram');
-        return variant.enabled && variant.name === 'earlyAccess';
+      featureProxyGuard({
+        expression: 'adminAccess && (betaTester || superUser)',
+        redirectTo: '/not-authorized',
       }),
     ],
   },
+  {
+    path: 'user',
+    loadComponent: () => import('./user/user.component'),
+    canActivate: [
+      // 👤 User-specific feature guard
+      featureProxyGuard({
+        condition: (service) => service.isEnabled('userFeatures') && service.getVariant('userTier').name === 'gold',
+        redirectTo: '/upgrade',
+      }),
+    ],
+  }
   {
     path: 'premium',
     loadChildren: () => import('./premium/premium.routes'),
     canActivateChild: [
       // 💎 Premium feature guard for child routes
-      featureProxyGuard((service) => service.isEnabled('premiumFeatures')),
+      featureProxyGuard({
+        expression: 'premiumUser && validSubscription',
+        redirectTo: '/subscribe',
+      }),
     ],
   },
 ];
@@ -406,24 +409,32 @@ export const routes: Routes = [
 
 ```typescript
 // 🔧 Custom guard with complex logic
-export const premiumGuard = featureProxyGuard((service) => {
-  const isPremium = service.isEnabled('premiumUser');
-  const isValidSubscription = service.isEnabled('validSubscription');
-  const variant = service.getVariant('premiumTier');
+export const premiumGuard = featureProxyGuard({
+  condition: (service) => {
+    const isPremium = service.isEnabled('premiumUser');
+    const isValidSubscription = service.isEnabled('validSubscription');
+    const variant = service.getVariant('premiumTier');
 
-  return isPremium && isValidSubscription && ['gold', 'platinum'].includes(variant.name);
-}, '/upgrade');
+    return isPremium && isValidSubscription && ['gold', 'platinum'].includes(variant.name);
+  },
+  redirectTo: '/upgrade',
+});
 
 // 🌍 Geo-based feature guard
-export const geoFeatureGuard = featureProxyGuard((service) => {
-  return service.features('featureEnabled && (region_US || region_EU)');
-}, '/geo-restricted');
+export const geoFeatureGuard = featureProxyGuard({
+  condition: (service) => {
+    return service.features('featureEnabled && (region_US || region_EU)');
+  },
+  redirectTo: '/geo-restricted',
+});
 
 // 📱 Device-specific guard
-export const mobileFeatureGuard = featureProxyGuard((service) => {
-  const mobileEnabled = service.isEnabled('mobileFeatures');
-  const isMobile = window.innerWidth < 768; // Simple mobile check
-  return mobileEnabled || !isMobile;
+export const mobileFeatureGuard = featureProxyGuard({
+  condition: (service) => {
+    const isMobile = service.getVariant('deviceType').name === 'mobile';
+    return isMobile && service.isEnabled('mobileFeatures');
+  },
+  redirectTo: '/desktop-only',
 });
 ```
 

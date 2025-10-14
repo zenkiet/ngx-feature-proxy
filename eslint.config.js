@@ -14,11 +14,12 @@ module.exports = tseslint.config(
     ],
     processor: angular.processInlineTemplates,
     rules: {
+      '@angular-eslint/no-input-rename': 'off',
       '@angular-eslint/directive-selector': [
         'error',
         {
           type: 'attribute',
-          prefix: 'lib',
+          prefix: '',
           style: 'camelCase',
         },
       ],

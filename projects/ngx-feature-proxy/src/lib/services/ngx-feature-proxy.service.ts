@@ -34,7 +34,6 @@ export class NgxFeatureProxyService implements OnDestroy {
 
   constructor() {
     this._listenToEvents();
-    this._initialize();
   }
 
   ngOnDestroy(): void {
@@ -94,19 +93,43 @@ export class NgxFeatureProxyService implements OnDestroy {
     }
   }
 
-  // -----------------------------------------------------------------------------------------------------
-  // @ Private Methods
-  // -----------------------------------------------------------------------------------------------------
+  /**
+   * Evaluate expression
+   */
+  eval(expr: string): boolean {
+    if (typeof expr !== 'string' || !expr.trim()) {
+      console.error('Expression is not a valid non-empty string:', expr);
+      return false;
+    }
+
+    if (/[^\w\s()&|!]/.test(expr)) {
+      console.error('Invalid expression:', expr);
+      return false;
+    }
+    try {
+      const prepared = expr
+        .trim()
+        .replace(/\b([A-Za-z0-9_]+)\b/g, (_, flag) => `this.isEnabled('${flag}')`);
+      return new Function(`return (${prepared});`).call(this);
+    } catch {
+      console.error('Error evaluating expression:', expr);
+      return false;
+    }
+  }
 
   /**
    * Initialize the client
    */
-  private _initialize() {
+  initialize() {
     this._client
       .start()
       .then(() => this.$state.set({ ...this.$state(), initialized: true, ready: true }))
       .catch((error) => this.$state.set({ ...this.$state(), error }));
   }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Private Methods
+  // -----------------------------------------------------------------------------------------------------
 
   /**
    * Listen to client events

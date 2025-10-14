@@ -23,26 +23,7 @@ export class FeatureProxyDirective {
       return value.some((flag) => this._service.isEnabled(flag));
     }
 
-    if (typeof value !== 'string') {
-      console.error('Expression is not a string:', value);
-      return false;
-    }
-
-    if (/[^\w\s()&|!]/.test(value.trim())) {
-      console.error('Expression contains invalid characters:', value);
-      return false;
-    }
-
-    const prepared = value.trim().replace(/\b([A-Za-z0-9_]+)\b/g, (_, name) => {
-      return `svc.isEnabled('${name}')`;
-    });
-
-    try {
-      return new Function('svc', `return (${prepared});`)(this._service);
-    } catch {
-      console.error('Error evaluating expression:', value);
-      return false;
-    }
+    return this._service.eval(value);
   });
 
   // --------------------------------------------------------------------------

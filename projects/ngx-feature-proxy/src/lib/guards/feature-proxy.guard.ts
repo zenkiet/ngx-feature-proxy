@@ -2,14 +2,36 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router, UrlTree } from '@angular/router';
 import { NgxFeatureProxyService } from '../services';
 
-export function featureProxyGuard(
-  predicate: (service: NgxFeatureProxyService) => boolean,
-  redirectTo?: string | UrlTree
-): CanActivateFn {
+interface FeatureProxyGuard {
+  expression?: string;
+  predicate?: (service: NgxFeatureProxyService) => boolean;
+  redirectTo?: string | UrlTree;
+}
+
+export function featureProxyGuard({
+  expression,
+  predicate,
+  redirectTo,
+}: FeatureProxyGuard): CanActivateFn {
   return () => {
     const service = inject(NgxFeatureProxyService);
     const router = inject(Router);
-    const allow = predicate(service);
+
+    if (!!expression === !!predicate) {
+      console.error('Please provide either expression or predicate, but not both.');
+      return false;
+    }
+
+    let allow = false;
+    if (expression) {
+      if (Array.isArray(expression)) {
+        allow = expression.some((flag) => service.isEnabled(flag));
+      } else {
+        allow = service.eval(expression);
+      }
+    } else if (predicate) {
+      allow = predicate(service);
+    }
 
     if (allow) return true;
     if (!redirectTo) return false;
