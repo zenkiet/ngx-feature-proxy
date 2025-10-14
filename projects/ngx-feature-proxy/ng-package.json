@@ -3,5 +3,6 @@
   "dest": "../../dist/ngx-feature-proxy",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "allowedNonPeerDependencies": ["unleash-proxy-client"]
 }

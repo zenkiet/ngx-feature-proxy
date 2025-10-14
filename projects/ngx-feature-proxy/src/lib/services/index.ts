@@ -1,1 +1,1 @@
-export * from './ngx-feature-proxy.service';
+export * from './feature-proxy.service';

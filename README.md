@@ -89,7 +89,7 @@ Unleash is an open-source feature flag management platform that enables you to:
 graph TB
     subgraph APP["📱 Angular Application (Frontend)"]
         COMP["🧩 Components"]
-        SERV["⚙️ NgxFeatureProxyService<br/>- Manage Feature Flags<br/>- Check Access"]
+        SERV["⚙️ FeatureProxyService<br/>- Manage Feature Flags<br/>- Check Access"]
         DIR["✨ FeatureProxy Directive<br/>- Show/Hide UI based on Flags"]
         GUARD["🔐 FeatureProxy Guards<br/>- Protect Routes"]
         SIGNAL["🔄 Signal State<br/>- Reactive Updates"]
@@ -186,7 +186,7 @@ bootstrapApplication(AppComponent, {
 ```typescript
 // 📁 src/app/app.component.ts
 import { Component, inject } from '@angular/core';
-import { NgxFeatureProxyService } from 'ngx-feature-proxy';
+import { FeatureProxyService } from 'ngx-feature-proxy';
 
 @Component({
   selector: 'app-root',
@@ -216,7 +216,7 @@ import { NgxFeatureProxyService } from 'ngx-feature-proxy';
   imports: [FeatureProxyDirective],
 })
 export class AppComponent {
-  private featureService = inject(NgxFeatureProxyService);
+  private featureService = inject(FeatureProxyService);
 
   // 🎯 Direct feature check
   isNewFeatureEnabled = this.featureService.isEnabled('newFeature');
@@ -236,11 +236,11 @@ export class AppComponent {
 
 ### 🔧 Service Usage
 
-The `NgxFeatureProxyService` is the core of the library, providing programmatic access to feature flags:
+The `FeatureProxyService` is the core of the library, providing programmatic access to feature flags:
 
 ```typescript
 import { Component, inject, computed, effect } from '@angular/core';
-import { NgxFeatureProxyService } from 'ngx-feature-proxy';
+import { FeatureProxyService } from 'ngx-feature-proxy';
 
 @Component({
   selector: 'app-feature-demo',
@@ -287,7 +287,7 @@ import { NgxFeatureProxyService } from 'ngx-feature-proxy';
   standalone: true,
 })
 export class FeatureDemoComponent {
-  private featureService = inject(NgxFeatureProxyService);
+  private featureService = inject(FeatureProxyService);
 
   // 📊 Reactive state
   $state = this.featureService.$state;

@@ -5,27 +5,22 @@ import {
   makeEnvironmentProviders,
   provideAppInitializer,
 } from '@angular/core';
-import { IConfig } from 'unleash-proxy-client';
 import { AngularHelper } from '../helpers';
-import { NgxFeatureProxyService } from '../services';
-import { UNLEASH_TOKEN } from '../tokens';
+import { FeatureProxyService } from '../services';
+import { FeatureProxyConfig, UNLEASH_TOKEN } from '../tokens';
 
-export interface NgxFeatureProxyConfig extends IConfig {
-  debug?: boolean;
-}
-
-export function provideFeatureProxy(config: NgxFeatureProxyConfig): EnvironmentProviders {
+export function provideFeatureProxy(config: FeatureProxyConfig): EnvironmentProviders {
   const version = AngularHelper.version();
 
   const providers = [];
 
   if (version >= 19) {
-    providers.push(provideAppInitializer(() => inject(NgxFeatureProxyService).initialize()));
+    providers.push(provideAppInitializer(() => inject(FeatureProxyService).initialize()));
   } else if (version >= 14) {
     providers.push({
       provide: APP_INITIALIZER,
-      useFactory: (service: NgxFeatureProxyService) => () => service.initialize(),
-      deps: [NgxFeatureProxyService],
+      useFactory: (service: FeatureProxyService) => () => service.initialize(),
+      deps: [FeatureProxyService],
       multi: true,
     });
   }

@@ -5,7 +5,7 @@ import { UNLEASH_TOKEN } from '../tokens';
 import { ImpressionEvent } from '../types';
 
 @Injectable({ providedIn: 'root' })
-export class NgxFeatureProxyService implements OnDestroy {
+export class FeatureProxyService implements OnDestroy {
   /** States */
   $state = signal({
     initialized: false,

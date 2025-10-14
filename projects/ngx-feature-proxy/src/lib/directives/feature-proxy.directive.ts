@@ -1,6 +1,6 @@
 import { NgIf } from '@angular/common';
 import { Directive, computed, effect, inject, input } from '@angular/core';
-import { NgxFeatureProxyService } from '../services';
+import { FeatureProxyService } from '../services';
 
 @Directive({
   selector: '[featureProxy]',
@@ -12,7 +12,7 @@ export class FeatureProxyDirective {
   $featureEnabled = input.required<string | string[]>({ alias: 'featureEnabled' });
 
   /** Services */
-  private _service = inject(NgxFeatureProxyService);
+  private _service = inject(FeatureProxyService);
   private _ngIf = inject(NgIf);
 
   /** Computed */

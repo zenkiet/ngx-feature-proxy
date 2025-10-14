@@ -1,10 +1,10 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, UrlTree } from '@angular/router';
-import { NgxFeatureProxyService } from '../services';
+import { FeatureProxyService } from '../services';
 
 interface FeatureProxyGuard {
   expression?: string;
-  predicate?: (service: NgxFeatureProxyService) => boolean;
+  predicate?: (service: FeatureProxyService) => boolean;
   redirectTo?: string | UrlTree;
 }
 
@@ -14,7 +14,7 @@ export function featureProxyGuard({
   redirectTo,
 }: FeatureProxyGuard): CanActivateFn {
   return () => {
-    const service = inject(NgxFeatureProxyService);
+    const service = inject(FeatureProxyService);
     const router = inject(Router);
 
     if (!!expression === !!predicate) {
