@@ -1,3 +1,9 @@
+# [1.4.0](https://github.com/zenkiet/ngx-feature-proxy/compare/v1.3.0...v1.4.0) (2025-10-16)
+
+### Features
+
+- ✨ implement debug tool component ([e9211a2](https://github.com/zenkiet/ngx-feature-proxy/commit/e9211a27ee013b26e0133f879f16d016839bf9b3))
+
 # [1.3.0](https://github.com/zenkiet/ngx-feature-proxy/compare/v1.2.0...v1.3.0) (2025-10-14)
 
 ### Features
