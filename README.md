@@ -22,6 +22,8 @@ _Reactive programming • Zero-configuration setup • Enterprise-ready_
 
 </div>
 
+[![Demo](https://img.youtube.com/vi/K-2rLjG7qyQ/maxresdefault.jpg)](https://youtu.be/K-2rLjG7qyQ)
+
 ---
 
 ## 📑 Table of Contents
@@ -61,6 +63,7 @@ _Reactive programming • Zero-configuration setup • Enterprise-ready_
 
 | Feature                    | Description                                  |
 | -------------------------- | -------------------------------------------- |
+| 🐞 **Debug Tool**          | Built-in debug info for easy troubleshooting |
 | ✨ **Type-Safe**           | Full TypeScript support with strict typing   |
 | 🚀 **Performance**         | Optimized with caching and smart updates     |
 | 🛡️ **Route Protection**    | Support for guards to protect routes         |
@@ -150,7 +153,7 @@ graph TB
 
 ```bash
 # 🚀 Install the library
-npm install ngx-feature-proxy unleash-proxy-client
+npm install ngx-feature-proxy
 ```
 
 ### ⚙️ Basic Setup
@@ -175,6 +178,7 @@ bootstrapApplication(AppComponent, {
       },
       refreshInterval: 30, // ⏱️ Refresh interval in seconds
       metricsInterval: 60, // 📊 Metrics interval in seconds
+      debug: true, // 🐞 Enable debug mode
     }),
     // ... other providers
   ],
