@@ -1,0 +1,400 @@
+<div
+  class="fp-debug"
+  tabindex="-1"
+  [class.fp-debug--open]="$isOpen()"
+  (keydown.escape)="closePanel($event)"
+>
+  <!-- Button -->
+  <button
+    type="button"
+    class="fp-debug__launcher"
+    aria-haspopup="dialog"
+    title="Feature Proxy Debug Console"
+    [attr.aria-expanded]="$isOpen()"
+    (click)="$isOpen.set(!$isOpen())"
+  >
+    <svg
+      class="fp-debug__launcher-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 576 512"
+    >
+      <path
+        opacity=".4"
+        fill="currentColor"
+        d="M192 96l0 3.6c0 15.7 12.7 28.4 28.4 28.4l135.1 0c15.7 0 28.4-12.7 28.4-28.4l0-3.6c0-53-43-96-96-96s-96 43-96 96zm72 184l0 230.2c7.8 1.2 15.8 1.8 24 1.8s16.2-.6 24-1.8L312 280c0-13.3-10.7-24-24-24s-24 10.7-24 24z"
+      />
+      <path
+        fill="currentColor"
+        d="M531.2 153.6c14.1-10.6 17-30.7 6.4-44.8s-30.7-17-44.8-6.4L384 184c-12.3-5.1-25.8-8-40-8l-112 0c-14.2 0-27.7 2.8-40 8L83.2 102.4C69.1 91.8 49 94.7 38.4 108.8s-7.7 34.2 6.4 44.8l97.8 73.3c-5.3 8.9-9.3 18.7-11.8 29.1L32 256c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0 0 32c0 2.6 .1 5.3 .2 7.9L44.8 422.4c-14.1 10.6-17 30.7-6.4 44.8s30.7 17 44.8 6.4l63.1-47.3c23.2 44.2 66.5 76.2 117.7 83.9L264 280c0-13.3 10.7-24 24-24s24 10.7 24 24l0 230.2c51.2-7.7 94.5-39.7 117.7-83.9l63.1 47.3c14.1 10.6 34.2 7.7 44.8-6.4s7.7-34.2-6.4-44.8l-83.4-62.5c.1-2.6 .2-5.2 .2-7.9l0-32 96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-98.8 0c-2.5-10.4-6.5-20.2-11.8-29.1l97.8-73.3z"
+      />
+    </svg>
+
+    <span class="fp-debug__launcher-ring"></span>
+  </button>
+
+  @if ($isOpen()) {
+    <section
+      class="fp-debug__panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="fp-debug-heading"
+      tabindex="-1"
+      (click)="$event.stopPropagation()"
+      (keydown.escape)="closePanel($event)"
+    >
+      @let state = $state();
+      <header class="fp-debug__panel-header">
+        <div class="fp-debug__panel-meta">
+          <span class="fp-debug__panel-badge">Feature Proxy</span>
+          <div class="fp-debug__panel-title">
+            <h2
+              id="fp-debug-heading"
+              class="fp-debug__panel-heading"
+            >
+              Debug Console
+            </h2>
+            <p class="fp-debug__panel-subtitle">
+              Monitor client state, context, and configuration in real-time.
+            </p>
+          </div>
+          <div class="fp-debug__panel-health">
+            <span
+              class="fp-debug__status-chip"
+              [class.positive]="state.ready"
+              [class.warn]="!state.ready"
+              [class.negative]="state.error"
+            >
+              <span class="fp-debug__status-dot"></span>
+              {{ state.error ? 'Error' : state.ready ? 'Connected' : 'Connecting' }}
+            </span>
+            <span class="fp-debug__panel-updated">
+              Last sync <strong>{{ state.updated | date: 'medium' }}</strong>
+            </span>
+          </div>
+        </div>
+
+        <div class="fp-debug__panel-actions">
+          <button
+            type="button"
+            class="fp-debug__action-btn"
+            [disabled]="$refreshing()"
+            (click)="refresh()"
+          >
+            <svg
+              class="fp-debug__action-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"
+              [class.spinning]="$refreshing()"
+            >
+              <path
+                opacity=".4"
+                fill="currentColor"
+                d="M0 344L0 488c0 9.7 5.8 18.5 14.8 22.2S34.1 511.8 41 505l51.8-51.8c44.3 36.7 101.2 58.8 163.3 58.8 129 0 235.7-95.4 253.4-219.5 2.5-17.5-9.7-33.7-27.1-36.2s-33.7 9.7-36.2 27.1c-13.3 93-93.4 164.5-190.1 164.5-44.4 0-85.2-15-117.7-40.3L185 361c6.9-6.9 8.9-17.2 5.2-26.2S177.7 320 168 320L24 320c-13.3 0-24 10.7-24 24z"
+              />
+              <path
+                fill="currentColor"
+                d="M488 192l-144 0c-9.7 0-18.5-5.8-22.2-14.8s-1.7-19.3 5.2-26.2l46.7-46.7C341.2 79 300.4 64 256 64 159.3 64 79.3 135.5 65.9 228.5 63.4 246 47.2 258.2 29.7 255.7S.1 237 2.6 219.5C20.3 95.4 127 0 256 0 318 0 375 22.1 419.3 58.8L471 7c6.9-6.9 17.2-8.9 26.2-5.2S512 14.3 512 24l0 144c0 13.3-10.7 24-24 24z"
+              />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="fp-debug__action-btn fp-debug__action-btn--ghost"
+            (click)="closePanel($event)"
+          >
+            <svg
+              class="fp-debug__action-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 384 512"
+            >
+              <path
+                opacity=".4"
+                fill="currentColor"
+                d="M55.1 73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L147.2 256 9.9 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192.5 301.3 329.9 438.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.8 256 375.1 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192.5 210.7 55.1 73.4z"
+              />
+              <path
+                fill="currentColor"
+                d=""
+              />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <nav
+        class="fp-debug__tablist"
+        role="tablist"
+      >
+        @for (tab of ['overview', 'toggles', 'config']; track tab) {
+          <button
+            type="button"
+            class="fp-debug__tab"
+            role="tab"
+            [class.active]="$activeTab() === tab"
+            (click)="$activeTab.set(tab)"
+          >
+            @switch (tab) {
+              @case ('overview') {
+                <svg
+                  class="fp-debug__tab-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 448 512"
+                >
+                  <path
+                    opacity=".4"
+                    fill="currentColor"
+                    d="M0 232l0 48c0 17.7 14.3 32 32 32l48 0c17.7 0 32-14.3 32-32l0-48c0-17.7-14.3-32-32-32l-48 0c-17.7 0-32 14.3-32 32zM168 64l0 48c0 17.7 14.3 32 32 32l48 0c17.7 0 32-14.3 32-32l0-48c0-17.7-14.3-32-32-32l-48 0c-17.7 0-32 14.3-32 32zm0 336l0 48c0 17.7 14.3 32 32 32l48 0c17.7 0 32-14.3 32-32l0-48c0-17.7-14.3-32-32-32l-48 0c-17.7 0-32 14.3-32 32zM336 232l0 48c0 17.7 14.3 32 32 32l48 0c17.7 0 32-14.3 32-32l0-48c0-17.7-14.3-32-32-32l-48 0c-17.7 0-32 14.3-32 32z"
+                  />
+                  <path
+                    fill="currentColor"
+                    d="M0 64C0 46.3 14.3 32 32 32l48 0c17.7 0 32 14.3 32 32l0 48c0 17.7-14.3 32-32 32l-48 0c-17.7 0-32-14.3-32-32L0 64zM0 400c0-17.7 14.3-32 32-32l48 0c17.7 0 32 14.3 32 32l0 48c0 17.7-14.3 32-32 32l-48 0c-17.7 0-32-14.3-32-32l0-48zM280 232l0 48c0 17.7-14.3 32-32 32l-48 0c-17.7 0-32-14.3-32-32l0-48c0-17.7 14.3-32 32-32l48 0c17.7 0 32 14.3 32 32zM336 64c0-17.7 14.3-32 32-32l48 0c17.7 0 32 14.3 32 32l0 48c0 17.7-14.3 32-32 32l-48 0c-17.7 0-32-14.3-32-32l0-48zM448 400l0 48c0 17.7-14.3 32-32 32l-48 0c-17.7 0-32-14.3-32-32l0-48c0-17.7 14.3-32 32-32l48 0c17.7 0 32 14.3 32 32z"
+                  />
+                </svg>
+                <span class="fp-debug__tab-label">Overview</span>
+              }
+              @case ('toggles') {
+                <svg
+                  class="fp-debug__tab-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    opacity=".4"
+                    fill="currentColor"
+                    d="M309.5-18.9c-4.1-8-12.4-13.1-21.4-13.1s-17.3 5.1-21.4 13.1L193.1 125.3 33.2 150.7c-8.9 1.4-16.3 7.7-19.1 16.3s-.5 18 5.8 24.4l114.4 114.5-25.2 159.9c-1.4 8.9 2.3 17.9 9.6 23.2s16.9 6.1 25 2L288.1 417.6 432.4 491c8 4.1 17.7 3.3 25-2s11-14.2 9.6-23.2L441.7 305.9 556.1 191.4c6.4-6.4 8.6-15.8 5.8-24.4s-10.1-14.9-19.1-16.3L383 125.3 309.5-18.9z"
+                  />
+                  <path
+                    fill="currentColor"
+                    d=""
+                  />
+                </svg>
+                <span class="fp-debug__tab-label">Feature Flags</span>
+              }
+              @case ('config') {
+                <svg
+                  class="fp-debug__tab-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                >
+                  <path
+                    opacity=".4"
+                    fill="currentColor"
+                    d="M208.3 256a47.7 47.7 0 1 0 95.4 0 47.7 47.7 0 1 0 -95.4 0z"
+                  />
+                  <path
+                    fill="currentColor"
+                    d="M195.1 9.5C198.1-5.3 211.2-16 226.4-16l59.8 0c15.2 0 28.3 10.7 31.3 25.5L332 79.5c14.1 6 27.3 13.7 39.3 22.8l67.8-22.5c14.4-4.8 30.2 1.2 37.8 14.4l29.9 51.8c7.6 13.2 4.9 29.8-6.5 39.9L447 233.3c.9 7.4 1.3 15 1.3 22.7s-.5 15.3-1.3 22.7l53.4 47.5c11.4 10.1 14 26.8 6.5 39.9l-29.9 51.8c-7.6 13.1-23.4 19.2-37.8 14.4l-67.8-22.5c-12.1 9.1-25.3 16.7-39.3 22.8l-14.4 69.9c-3.1 14.9-16.2 25.5-31.3 25.5l-59.8 0c-15.2 0-28.3-10.7-31.3-25.5l-14.4-69.9c-14.1-6-27.2-13.7-39.3-22.8L73.5 432.3c-14.4 4.8-30.2-1.2-37.8-14.4L5.8 366.1c-7.6-13.2-4.9-29.8 6.5-39.9l53.4-47.5c-.9-7.4-1.3-15-1.3-22.7s.5-15.3 1.3-22.7L12.3 185.8c-11.4-10.1-14-26.8-6.5-39.9L35.7 94.1c7.6-13.2 23.4-19.2 37.8-14.4l67.8 22.5c12.1-9.1 25.3-16.7 39.3-22.8L195.1 9.5zM256.3 352a96 96 0 1 0 -.6-192 96 96 0 1 0 .6 192z"
+                  />
+                </svg>
+                <span class="fp-debug__tab-label">Configuration</span>
+              }
+            }
+          </button>
+        }
+      </nav>
+
+      <div class="fp-debug__panel-body">
+        @let snapshot = $snapshot();
+
+        @switch ($activeTab()) {
+          @case ('overview') {
+            @let contextSummary = $contextSummary();
+            <div
+              class="fp-debug__view"
+              id="fp-debug-panel-overview"
+              role="tabpanel"
+              aria-labelledby="fp-debug-tab-overview"
+            >
+              <section class="fp-debug__summary">
+                <article class="fp-debug__summary-card">
+                  <div class="fp-debug__summary-body">
+                    <span class="fp-debug__summary-label">Feature toggles</span>
+                    <span class="fp-debug__summary-value">
+                      {{ snapshot.toggles.length }}
+                    </span>
+                    <span class="fp-debug__summary-meta">
+                      Cached {{ snapshot.cachedFlags.length }}
+                    </span>
+                  </div>
+                </article>
+
+                <article class="fp-debug__summary-card">
+                  <div class="fp-debug__summary-body">
+                    <span class="fp-debug__summary-label">Notes</span>
+                    <span class="fp-debug__summary-value"> Server </span>
+                    <span class="fp-debug__summary-meta">
+                      {{ snapshot.config?.url || 'Using provided proxy URL' }}
+                    </span>
+                  </div>
+                </article>
+              </section>
+
+              @if (state.error) {
+                <aside class="fp-debug__callout fp-debug__callout--error">
+                  <svg
+                    class="fp-debug__callout-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"
+                  >
+                    <path
+                      opacity=".4"
+                      fill="currentColor"
+                      d="M4.8 421c-6.7 12.4-6.4 27.4 .8 39.5S25.9 480 40 480l432 0c14.1 0 27.1-7.4 34.4-19.5s7.5-27.1 .8-39.5L291.2 21C284.2 8.1 270.7 0 256 0s-28.2 8.1-35.2 21L4.8 421zM288 384a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM224.6 193.7C223.3 175.5 237.7 160 256 160s32.7 15.5 31.4 33.7l-7.4 104C279 310.3 268.6 320 256 320s-23-9.7-23.9-22.3l-7.4-104z"
+                    />
+                    <path
+                      fill="currentColor"
+                      d="M256 416a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm0-256c18.3 0 32.7 15.5 31.4 33.7l-7.4 104C279 310.3 268.6 320 256 320s-23-9.7-23.9-22.3l-7.4-104C223.3 175.5 237.7 160 256 160z"
+                    />
+                  </svg>
+                  <div class="fp-debug__callout-body">
+                    <h3>Client error</h3>
+                    <p>{{ state.error | json }}</p>
+                  </div>
+                </aside>
+              }
+
+              <section class="fp-debug__section">
+                <div class="fp-debug__section-header">
+                  <h3 class="fp-debug__section-title">Client Context</h3>
+                </div>
+                @if (contextSummary.entries.length || contextSummary.propertyEntries.length) {
+                  <div class="fp-debug__context-grid">
+                    @for (item of contextSummary.entries; track item[0]) {
+                      <div class="fp-debug__context-item">
+                        <dt class="fp-debug__context-key">{{ item[0] }}</dt>
+                        <dd class="fp-debug__context-value">{{ item[1] }}</dd>
+                      </div>
+                    }
+                    @for (property of contextSummary.propertyEntries; track property[0]) {
+                      <div class="fp-debug__context-item fp-debug__context-item--nested">
+                        <dt class="fp-debug__context-key">properties.{{ property[0] }}</dt>
+                        <dd class="fp-debug__context-value">{{ property[1] }}</dd>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <p class="fp-debug__empty-text">No client context applied yet.</p>
+                }
+              </section>
+
+              <section class="fp-debug__section">
+                <div class="fp-debug__section-header">
+                  <h3 class="fp-debug__section-title">Raw Snapshot</h3>
+
+                  <ng-container *ngTemplateOutlet="copy; context: { $implicit: snapshot }" />
+                </div>
+                <div class="fp-debug__code-block">
+                  <pre class="fp-debug__code">{{ snapshot | json }}</pre>
+                </div>
+              </section>
+            </div>
+          }
+
+          @case ('toggles') {
+            <div
+              class="fp-debug__view"
+              id="fp-debug-panel-toggles"
+              role="tabpanel"
+              aria-labelledby="fp-debug-tab-toggles"
+            >
+              <div class="fp-debug__section-header">
+                <h3 class="fp-debug__section-title">Feature Flags</h3>
+                <ng-container *ngTemplateOutlet="copy; context: { $implicit: snapshot.toggles }" />
+              </div>
+
+              @if (snapshot.toggles.length) {
+                <div
+                  class="fp-debug__table"
+                  role="table"
+                >
+                  <div
+                    class="fp-debug__table-row fp-debug__table-row--head"
+                    role="row"
+                  >
+                    <span role="columnheader">Name</span>
+                    <span role="columnheader">State</span>
+                    <span role="columnheader">Variant</span>
+                  </div>
+                  @for (toggle of snapshot.toggles; track toggle.name) {
+                    <div
+                      class="fp-debug__table-row"
+                      role="row"
+                    >
+                      <span class="fp-debug__table-name">{{ toggle.name }}</span>
+                      <span
+                        class="fp-debug__chip"
+                        [class.positive]="toggle.enabled"
+                        [class.negative]="!toggle.enabled"
+                      >
+                        {{ toggle.enabled ? 'Enabled' : 'Disabled' }}
+                      </span>
+                      <span class="fp-debug__table-variant">
+                        {{ toggle.variant?.name || '-' }}
+                      </span>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p class="fp-debug__empty-text">
+                  No feature flags have been received. Trigger a refresh to load the current state.
+                </p>
+              }
+            </div>
+          }
+
+          @case ('config') {
+            <div
+              class="fp-debug__view"
+              id="fp-debug-panel-config"
+              role="tabpanel"
+              aria-labelledby="fp-debug-tab-config"
+            >
+              <section class="fp-debug__section">
+                <div class="fp-debug__section-header">
+                  <h3 class="fp-debug__section-title">Active Configuration</h3>
+                  <ng-container *ngTemplateOutlet="copy; context: { $implicit: config }" />
+                </div>
+                <div class="fp-debug__code-block">
+                  <pre class="fp-debug__code">{{ config | formatJson }}</pre>
+                </div>
+              </section>
+            </div>
+          }
+        }
+      </div>
+    </section>
+  }
+</div>
+
+<ng-template
+  #copy
+  let-value
+>
+  <button
+    type="button"
+    class="fp-debug__copy-btn"
+    [class.pending]="$copyState() === 'pending'"
+    [class.success]="$copyState() === 'success'"
+    [class.error]="$copyState() === 'error'"
+    (click)="copyClipboard(value)"
+  >
+    <span class="fp-debug__copy-label">
+      @switch ($copyState()) {
+        @case ('idle') {
+          Copy
+        }
+        @case ('pending') {
+          Copying…
+        }
+
+        @case ('success') {
+          Copied!
+        }
+
+        @case ('error') {
+          Copy failed
+        }
+      }
+    </span>
+  </button>
+</ng-template>

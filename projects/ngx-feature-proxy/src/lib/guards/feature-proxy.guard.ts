@@ -3,7 +3,7 @@ import { CanActivateFn, Router, UrlTree } from '@angular/router';
 import { FeatureProxyService } from '../services';
 
 interface FeatureProxyGuard {
-  expression?: string;
+  expression?: string | string[];
   predicate?: (service: FeatureProxyService) => boolean;
   redirectTo?: string | UrlTree;
 }
@@ -25,7 +25,7 @@ export function featureProxyGuard({
     let allow = false;
     if (expression) {
       if (Array.isArray(expression)) {
-        allow = expression.some((flag) => service.isEnabled(flag));
+        allow = expression.every((flag) => service.isEnabled(flag));
       } else {
         allow = service.eval(expression);
       }
